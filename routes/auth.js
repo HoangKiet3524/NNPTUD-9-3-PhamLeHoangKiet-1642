@@ -57,9 +57,10 @@ router.post('/logout', checkLogin, function (req, res, next) {
 router.post('/changepassword', checkLogin, async function (req, res, next) {
   let { oldPassword, newPassword } = req.body;
   let user = await userController.FindByID(req.userId);
-  if (bcrypt.compareSync(oldPassword, user.password)) {
-    user.password = newPassword;
+  if (!bcrypt.compareSync(oldPassword, user.password)) {
+    return res.status(400).send({ message: "mat khau cu khong dung" });
   }
+  user.password = newPassword;
   await user.save();
   res.send("da cap nhat password")
 })
